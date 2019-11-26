@@ -1,6 +1,18 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  EventInvokeConfig:
+    Type: AWS::Lambda::EventInvokeConfig
+    Properties:
+      FunctionName: thisFunctionIsGoingPlaces
+      Qualifier: $LATEST
+      MaximumEventAgeInSeconds: 600
+      MaximumRetryAttempts: 0
+      DestinationConfig:
+        OnSuccess:
+          Destination: !GetAtt WinQueue.Arn
+        OnFailure:
+          Destination: !GetAtt FailQueue.Arn
   WinQueue:
     Type: AWS::SQS::Queue
     Properties:
